@@ -64,13 +64,10 @@ public class MinioStorageService implements StorageService{
     }
 
     @Override
-    public void upload(
-            String objectName,
-            MultipartFile file
-    ) {
+    public void upload(String objectName, MultipartFile file, String contentType) {
         try (InputStream inputStream = file.getInputStream()) {
-
-            minioClient.putObject(
+        	
+        	minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
                             .object(objectName)
@@ -79,7 +76,7 @@ public class MinioStorageService implements StorageService{
                                     file.getSize(),
                                     AUTO_PART_SIZE
                             )
-                            .contentType(file.getContentType())
+                            .contentType(contentType)
                             .build()
             );
 
@@ -92,9 +89,7 @@ public class MinioStorageService implements StorageService{
     }
 
     @Override
-    public InputStream download(
-            String objectName
-    ) {
+    public InputStream download(String objectName) {
         try {
             return minioClient.getObject(
                     GetObjectArgs.builder()
@@ -112,9 +107,7 @@ public class MinioStorageService implements StorageService{
     }
 
     @Override
-    public void delete(
-            String objectName
-    ) {
+    public void delete(String objectName) {
         try {
             minioClient.removeObject(
                     RemoveObjectArgs.builder()

@@ -10,16 +10,9 @@ public interface StorageService {
     
     String getBucketName();
 
-    void upload(
-            String objectName,
-            MultipartFile file
-    );
+    void upload(String objectName, MultipartFile file, String contentType);
 
-    InputStream download(
-            String objectName
-    );
+    InputStream download(String objectName);
 
-    void delete(
-            String objectName
-    );
+    void delete(String objectName);
 }
