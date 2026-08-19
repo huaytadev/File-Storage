@@ -21,14 +21,36 @@ import com.file_storage.common.response.ApiResponse;
 import com.file_storage.file.dto.FileResponse;
 import com.file_storage.file.service.FileService;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/files")
 @RequiredArgsConstructor
+@Tag(
+        name = "Files",
+        description = "File management endpoints"
+)
 public class FileController {
 	private final FileService fileService;
 
+	@Operation(summary = "Upload a file")
+	@ApiResponses({
+	    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+	        responseCode = "201",
+	        description = "File uploaded successfully."
+	    ),
+	    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+	        responseCode = "400",
+	        description = "Invalid file."
+	    ),
+	    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+	        responseCode = "413",
+	        description = "File exceeds the maximum allowed size."
+	    )
+	})
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<FileResponse>> upload(
             @RequestParam("file") MultipartFile file
@@ -44,6 +66,7 @@ public class FileController {
                 ));
     }
 
+    @Operation(summary = "Get file metadata")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<FileResponse>> getMetadata(
             @PathVariable UUID id
@@ -59,6 +82,17 @@ public class FileController {
         );
     }
 
+    @Operation(summary = "Download a file")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "File downloaded successfully."
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "File not found."
+            )
+    })
     @GetMapping("/{id}/download")
     public ResponseEntity<InputStreamResource> download(
             @PathVariable UUID id
@@ -89,6 +123,17 @@ public class FileController {
                 .body(resource);
     }
 
+    @Operation(summary = "Delete a file")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "File deleted successfully."
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "File not found."
+            )
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable UUID id
